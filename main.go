@@ -11,7 +11,7 @@ type Request struct {
 }
 
 func main() {
-	p, err := plugin.NewPlugin("/bin/cat")
+	p, err := plugin.NewPlugin("./plugin-bin/json")
 	if err != nil {
 		fmt.Println(err)
 		return
