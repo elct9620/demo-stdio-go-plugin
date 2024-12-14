@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
-	"io"
-	"net/rpc"
-	"os"
+
+	"github.com/elct9620/demo-stdio-go-plugin/pkg/sdk"
 )
 
 type Request struct {
@@ -18,20 +17,8 @@ func (e *Echo) Ping(req Request, reply *Request) error {
 	return nil
 }
 
-type conn struct {
-	io.Reader
-	io.WriteCloser
-}
-
 func main() {
-	conn := &conn{
-		Reader:      os.Stdin,
-		WriteCloser: os.Stdout,
-	}
-
-	server := rpc.NewServer()
-	defer conn.Close()
-
-	server.Register(&Echo{})
-	server.ServeConn(conn)
+	plugin := sdk.NewPlugin()
+	plugin.Register(&Echo{})
+	plugin.Start()
 }
