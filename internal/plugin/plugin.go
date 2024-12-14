@@ -29,12 +29,16 @@ func (p *Plugin) Name() string {
 	return p.name
 }
 
-func (p *Plugin) Call(service string, args any) (any, error) {
+func (p *Plugin) Client() (*Client, error) {
 	cmd := exec.Command(p.path)
-	out, err := cmd.Output()
+	client, err := NewClient(cmd)
 	if err != nil {
-		return nil, fmt.Errorf("Error executing plugin %s: %v", p.name, err)
+		return nil, fmt.Errorf("Error creating client for plugin %s: %v", p.name, err)
 	}
 
-	return out, nil
+	if err := cmd.Start(); err != nil {
+		return nil, fmt.Errorf("Error starting plugin %s: %v", p.name, err)
+	}
+
+	return client, nil
 }
