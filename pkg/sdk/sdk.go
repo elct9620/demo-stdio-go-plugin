@@ -11,6 +11,8 @@ type conn struct {
 	io.WriteCloser
 }
 
+type Operation string
+
 type Plugin struct {
 	server *rpc.Server
 }

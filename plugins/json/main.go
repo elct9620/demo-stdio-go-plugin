@@ -6,13 +6,11 @@ import (
 	"github.com/elct9620/demo-stdio-go-plugin/pkg/sdk"
 )
 
-type Request struct {
-	Msg string
-}
+var _ sdk.EchoService = &Echo{}
 
 type Echo struct{}
 
-func (e *Echo) Ping(req Request, reply *Request) error {
+func (e *Echo) Ping(req sdk.EchoRequest, reply *sdk.EchoResponse) error {
 	reply.Msg = fmt.Sprintf("Echo: %s", req.Msg)
 	return nil
 }

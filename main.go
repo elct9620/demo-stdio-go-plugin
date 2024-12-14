@@ -6,10 +6,6 @@ import (
 	"github.com/elct9620/demo-stdio-go-plugin/internal/plugin"
 )
 
-type Request struct {
-	Msg string
-}
-
 func main() {
 	p, err := plugin.NewPlugin("./plugin-bin/json")
 	if err != nil {
@@ -24,20 +20,18 @@ func main() {
 	}
 	defer client.Close()
 
-	var reply Request
-	err = client.Call("Echo.Ping", &Request{Msg: "Hello, World!"}, &reply)
+	reply, err := client.Ping("Hello World")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(reply)
+
+	reply, err = client.Ping("Another Message")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	fmt.Println(reply.Msg)
-
-	err = client.Call("Echo.Ping", &Request{Msg: "Another Message"}, &reply)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	fmt.Println(reply.Msg)
+	fmt.Println(reply)
 }

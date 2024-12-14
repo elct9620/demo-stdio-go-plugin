@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/rpc"
 	"os/exec"
+
+	"github.com/elct9620/demo-stdio-go-plugin/pkg/sdk"
 )
 
 type Client struct {
@@ -31,11 +33,12 @@ func (c *Client) Close() (err error) {
 	return c.rpc.Close()
 }
 
-func (c *Client) Call(service string, args any, reply any) error {
-	err := c.rpc.Call(service, args, reply)
+func (c *Client) Ping(msg string) (reply string, err error) {
+	var req sdk.EchoRequest
+	err = c.rpc.Call("Echo.Ping", sdk.EchoRequest{Msg: msg}, &req)
 	if err != nil {
-		return err
+		return "", fmt.Errorf("Error calling Ping: %v", err)
 	}
 
-	return nil
+	return req.Msg, nil
 }
