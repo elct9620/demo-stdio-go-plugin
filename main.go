@@ -1,12 +1,24 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
+	"os"
 
-	"github.com/elct9620/demo-stdio-go-plugin/internal/entity"
+	"github.com/elct9620/demo-stdio-go-plugin/internal/controller"
 	"github.com/elct9620/demo-stdio-go-plugin/internal/plugin"
+	"github.com/elct9620/demo-stdio-go-plugin/internal/usecase"
 )
+
+type StdoutPresenter struct{}
+
+func (p *StdoutPresenter) Render(data []byte) error {
+	fmt.Println("")
+	fmt.Println("Encoded data:")
+	fmt.Println(string(data))
+	return nil
+}
 
 func main() {
 	// Section: entrypoint
@@ -35,17 +47,12 @@ func main() {
 	}
 	defer client.Close()
 
-	// Section: usecase
-	products := []*entity.Product{
-		entity.NewProduct("Apple", 10),
-		entity.NewProduct("Banana", 20),
-	}
+	presenter := &StdoutPresenter{}
+	usecase := usecase.NewEncodeProduct(client, presenter)
 
-	res, err := client.Encode(products)
+	controller := controller.NewStdin(usecase)
+	err = controller.Handle(context.Background(), os.Stdin)
 	if err != nil {
 		fmt.Println(err)
-		return
 	}
-
-	fmt.Println(string(res))
 }
