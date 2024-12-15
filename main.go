@@ -4,8 +4,8 @@ import (
 	"flag"
 	"fmt"
 
+	"github.com/elct9620/demo-stdio-go-plugin/internal/entity"
 	"github.com/elct9620/demo-stdio-go-plugin/internal/plugin"
-	"github.com/elct9620/demo-stdio-go-plugin/pkg/sdk"
 )
 
 func main() {
@@ -36,24 +36,16 @@ func main() {
 	defer client.Close()
 
 	// Section: usecase
-	products := []sdk.Item{
-		{
-			Name:  "Apple",
-			Price: 40,
-		},
-		{
-			Name:  "Banana",
-			Price: 30,
-		},
+	products := []*entity.Product{
+		entity.NewProduct("Apple", 10),
+		entity.NewProduct("Banana", 20),
 	}
 
-	res, err := client.Encode(&sdk.EncodeRequest{
-		Items: products,
-	})
+	res, err := client.Encode(products)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	fmt.Println(string(res.Result))
+	fmt.Println(string(res))
 }

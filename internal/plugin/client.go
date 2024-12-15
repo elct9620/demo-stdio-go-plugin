@@ -5,6 +5,7 @@ import (
 	"net/rpc"
 	"os/exec"
 
+	"github.com/elct9620/demo-stdio-go-plugin/internal/entity"
 	"github.com/elct9620/demo-stdio-go-plugin/pkg/sdk"
 )
 
@@ -43,12 +44,23 @@ func (c *Client) Ping(msg string) (reply string, err error) {
 	return req.Msg, nil
 }
 
-func (c *Client) Encode(req *sdk.EncodeRequest) (reply *sdk.EncodeResponse, err error) {
-	reply = &sdk.EncodeResponse{}
-	err = c.rpc.Call("Encoder.Encode", req, reply)
+func (c *Client) Encode(products []*entity.Product) (reply []byte, err error) {
+	req := &sdk.EncodeRequest{
+		Items: make([]sdk.Item, 0, len(products)),
+	}
+
+	for _, p := range products {
+		req.Items = append(req.Items, sdk.Item{
+			Name:  p.Name(),
+			Price: p.Price(),
+		})
+	}
+
+	res := &sdk.EncodeResponse{}
+	err = c.rpc.Call("Encoder.Encode", req, res)
 	if err != nil {
 		return nil, fmt.Errorf("Error calling Encode: %v", err)
 	}
 
-	return reply, nil
+	return res.Result, nil
 }
