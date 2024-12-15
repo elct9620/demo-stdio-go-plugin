@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	p, err := plugin.NewPlugin("./plugin-bin/json")
+	p, err := plugin.NewPlugin("./plugin-bin/xml")
 	if err != nil {
 		fmt.Println(err)
 		return
