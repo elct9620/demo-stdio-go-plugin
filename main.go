@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/elct9620/demo-stdio-go-plugin/internal/plugin"
+	"github.com/elct9620/demo-stdio-go-plugin/pkg/sdk"
 )
 
 func main() {
@@ -20,18 +21,24 @@ func main() {
 	}
 	defer client.Close()
 
-	reply, err := client.Ping("Hello World")
+	products := []sdk.Item{
+		{
+			Name:  "Apple",
+			Price: 40,
+		},
+		{
+			Name:  "Banana",
+			Price: 30,
+		},
+	}
+
+	res, err := client.Encode(&sdk.EncodeRequest{
+		Items: products,
+	})
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println(reply)
 
-	reply, err = client.Ping("Another Message")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	fmt.Println(reply)
+	fmt.Println(string(res.Result))
 }

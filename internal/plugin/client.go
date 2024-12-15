@@ -42,3 +42,13 @@ func (c *Client) Ping(msg string) (reply string, err error) {
 
 	return req.Msg, nil
 }
+
+func (c *Client) Encode(req *sdk.EncodeRequest) (reply *sdk.EncodeResponse, err error) {
+	reply = &sdk.EncodeResponse{}
+	err = c.rpc.Call("Encoder.Encode", req, reply)
+	if err != nil {
+		return nil, fmt.Errorf("Error calling Encode: %v", err)
+	}
+
+	return reply, nil
+}
