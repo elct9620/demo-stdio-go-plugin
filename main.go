@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 
 	"github.com/elct9620/demo-stdio-go-plugin/internal/plugin"
@@ -8,7 +9,20 @@ import (
 )
 
 func main() {
-	p, err := plugin.NewPlugin("./plugin-bin/xml")
+	// Section: entrypoint
+	var pluginName = "json"
+	flag.StringVar(&pluginName, "plugin", pluginName, "plugin name")
+	flag.Parse()
+
+	manager := plugin.NewManager()
+	err := manager.Discover("./plugin-bin")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// Section: controller
+	p, err := manager.Get(pluginName)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -21,6 +35,7 @@ func main() {
 	}
 	defer client.Close()
 
+	// Section: usecase
 	products := []sdk.Item{
 		{
 			Name:  "Apple",
